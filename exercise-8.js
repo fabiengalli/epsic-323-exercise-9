@@ -1,3 +1,5 @@
+const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
+
 const students = [
     'Rémi Fasol',
     'Justin Doigt',
@@ -60,48 +62,37 @@ const modules = [
 ];
 
 // the more a grade is present, the more likely it is to be picked
-const gradesDistribution = [];
-for (let i = 0; i < 3; i++) {
-    gradesDistribution.push(6);
-}
-for (let i = 0; i < 5; i++) {
-    gradesDistribution.push(5.5);
-}
-for (let i = 0; i < 10; i++) {
-    gradesDistribution.push(5);
-}
-for (let i = 0; i < 17; i++) {
-    gradesDistribution.push(4.5);
-}
-for (let i = 0; i < 14; i++) {
-    gradesDistribution.push(4);
-}
-for (let i = 0; i < 8; i++) {
-    gradesDistribution.push(3.5);
-}
-for (let i = 0; i < 5; i++) {
-    gradesDistribution.push(3);
-}
-for (let i = 0; i < 3; i++) {
-    gradesDistribution.push(2.5);
-}
-for (let i = 0; i < 2; i++) {
-    gradesDistribution.push(2);
-}
-for (let i = 0; i < 1; i++) {
-    gradesDistribution.push(1.5);
-}
-for (let i = 0; i < 1; i++) {
-    gradesDistribution.push(1);
-}
+const gradesDistribution = [
+    ...Array(3).fill(6),
+    ...Array(5).fill(5.5),
+    ...Array(10).fill(5),
+    ...Array(17).fill(4.5),
+    ...Array(14).fill(4),
+    ...Array(8).fill(3.5),
+    ...Array(5).fill(3),
+    ...Array(3).fill(2.5),
+    ...Array(2).fill(2),
+    ...Array(1).fill(1.5),
+    ...Array(1).fill(1),
+];
 
-let csv = "Nom;Module;Type;Réussi;Note\n";
-for (let i=0; i<modules.length; i++) {
-    for (let j=0; j<students.length; j++) {
-        const grade = gradesDistribution[Math.floor(Math.random() * gradesDistribution.length)];
-        const success = grade >= 4 ? 'Oui' : 'Non';
-        csv += `${students[j]};${modules[i].num};${modules[i].type};${success};${grade}\n`;
-    }
-}
+const randomNumber = (min, max) => Math.floor(Math.random() * (max - min) + min);
+const randomIndex = array => randomNumber(0, array.length);
+const randomGrade = availableGrades => availableGrades[randomIndex(availableGrades)];
+const randomGrades = (names) => (availableGrades) => (module) => names.map(name => {
+    const grade = randomGrade(availableGrades);
+    const success = grade >= 4 ? 'Oui' : 'Non';
+    return `${name};${module.num};${module.type};${success};${grade}`;
+})
 
+const generatedGradesByModule = students => gradesDistribution => modules => modules.map(module => randomGrades(students)(gradesDistribution)(module));
+const oneGradePerLine = modules => modules.reduce((acc, val) => acc.concat(val), []);
+const toString = grades => grades.join('\n');
+const generatedGrades = (students, gradesDistribution) => pipe(
+    generatedGradesByModule(students)(gradesDistribution),
+    oneGradePerLine,
+    toString
+);
+
+const csv = "Nom;Module;Type;Réussi;Note\n" + generatedGrades(students, gradesDistribution)(modules);
 display(csv);
