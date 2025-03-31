@@ -86,14 +86,13 @@ class SQLConditionBuilder {
 
     in = value => {
         this.condition.operator = 'IN';
-        this.condition.value = "(" + value.join(',') + ")";
+        this.condition.value = "('" + value.join("','") + "')";
         this.sqlQueryBuilder.query.where.push(this.build());
         return this.sqlQueryBuilder;
     }
 
     build = () => [this.condition.column, this.condition.operator, this.condition.value].join(" ");
 }
-
 
 const queries = [
     // "SELECT * FROM pizzas;",
