@@ -33,7 +33,8 @@ class SQLQueryBuilder {
         + " FROM " + this.query.from.join(", ")
         + (this.query.where.length ? " WHERE " + this.query.where.join(" AND ") : "")
         + (this.query.orderBy.length ? " ORDER BY " + this.query.orderBy.map(order => order.column + " " + order.direction).join(", ") : "")
-        + (this.query.limit ? " LIMIT " + this.query.limit : "");
+        + (this.query.limit ? " LIMIT " + this.query.limit : "")
+        + ";";
 }
 
 class SQLConditionBuilder {
