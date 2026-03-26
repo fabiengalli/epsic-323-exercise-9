@@ -109,7 +109,7 @@ const queries = [
         .orderBy("price", "DESC")
         .limit(5)
         .build(),
-    // "SELECT a.name, b.name as 'category' FROM pizzas a, categories b WHERE a.categoryId=b.id AND b.name IN ('Neapolitan', 'Sicilian');"
+    // "SELECT a.name, b.name as 'category' FROM pizzas a, categories b WHERE a.categoryId = b.id AND b.name IN ('Neapolitan', 'Sicilian');"
     new SQLQueryBuilder()
         .select("a.name")
         .select("b.name as 'category'")
